@@ -1,0 +1,34 @@
+samplingTime=10e-4;
+t=-1:samplingTime:1;
+fc=500;
+mt=2*sinc(2*t/0.01)+sinc((2*t/0.01)+1)+sinc((2*t/0.01)-1);
+mh=mt/(pi*t);
+phiusb=mt.*cos(2*pi*fc*t)-mh.*sin(2*pi*fc*t);
+L_fft=length(phiusb);
+F_m=fftshift(fft(phiusb,L_fft));
+demod_sig=mt+(mt.*cos(2*pi*fc*t)-mh.*sin(2*2*pi*fc*t));
+subplot(3,1,1);
+plot(t,demod_sig);
+title('Demodulated Signal Without LPF');
+axis([-0.1 0.1 0 4]);
+
+subplot(3,1,2);
+n=100;
+wn=0.6;
+ff=fir1(n,wn);
+filtered_sig=filter(ff,1,demod_sig);
+plot(t,filtered_sig);
+axis([-0.1 0.1 -1 3]);
+title('Demodulated Signal With LPF');
+
+phi_demod_sig=mt+(mt.*cos(2*pi*fc*t)-mh.*sin(2*2*pi*fc*t));
+subplot(3,1,3);
+n=100;
+wn=0.6;
+ff=fir1(n,wn);
+filtered_signal=filter(ff,1,phi_demod_sig);
+L_fft=length(filtered_signal);
+F_m=fftshift(fft(filtered_signal,L_fft));
+plot(t,F_m);
+axis([-0.4 0.4 -30 30]);
+title('Frequency Spectrum of Demodulated Signal with LPF');
